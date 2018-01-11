@@ -1,5 +1,14 @@
 const mongoose = require('mongoose');
 
+/*
+ - MongoClient have callback method, but mongoose little bit of complex
+ SIMPLY : 
+    mongoose not static connection to the database, if we try to execute query behind the 
+    scene mongoose waiting for a connection, so that's why we use 
+        @mongoose.Promise = global.Promise ,command.
+    [mongoose support promise]
+ */
+
 mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost:27017/TodoApp');
 
