@@ -14,24 +14,62 @@ mongoose.connect('mongodb://localhost:27017/TodoApp');
 
 var todo = mongoose.model('todos',{
     text : {
-        type : String
+        type : String,
+        required : true,
+        minlength : 1,
+        trim : true
     },
     completed : {
-        type : Boolean
+        type : Boolean,
+        default : false
     },
     completedAt : {
-        type : Number
+        type : Number,
+        default : null
     }
 });
 
 var newTodo = new todo({
     text : 'learn nodejs',
-    completed : false,
-    completedAt : Date.now()
+    // completed : false,
+    // completedAt : Date.now()
 });
 
-newTodo.save().then((docs) => {
+// newTodo.save().then((docs) => {
+//     console.log('Saved success', docs);
+// },(err) => {
+//     console.log('Something went wrong', err);
+// });
+
+var user = mongoose.model('users', {
+    name : {
+        type : String,
+        required : true,
+        minlength : 1,
+        trim : true
+    },
+    email : {
+        type : String,
+        required : true,
+        minlength : 1,
+        trim : true
+    },
+    password : {
+        type : String,
+        required : true,
+        minlength : 1,
+        //trim : true
+    }
+});
+
+var newUser = new user({
+    name : 'gayan madurapperuma',
+    email : ' gayantwalight@gmail.com',
+    password : 'sinxcosx=tanx'
+});
+
+newUser.save().then((docs) => {
     console.log('Saved success', docs);
-},(err) => {
-    console.log('Something went wrong', err);
+}, (err) => {
+    console.log('unable to save data', err);
 })
