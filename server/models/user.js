@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
+const jwt = require('jsonwebtoken');
+
 /* 
     user Model Structure
     email : [unique],
@@ -7,7 +9,7 @@ const validator = require('validator');
     tokens(Authentication method) : auth and tokens
 */
 
-var user = mongoose.model('users', {
+var userSchema = new mongoose.Schema({
     email : {
         type : String,
         required : true,
@@ -38,7 +40,27 @@ var user = mongoose.model('users', {
             required : true,
         }
     }]
+},{ 
+    usePushEach : true
 });
+
+/*
+    userSchema.method is object, so can add any mathod I like.i[nstanse mathod..]
+*/
+userSchema.methods.generateAuthToken = function () {
+    var user = this;
+    var access = 'auth';
+    //jwt secrat value normally get FROM CONFIGURATION VARIABLE
+    var token = jwt.sign({_id : user._id.toHexString(), access},'sinxcosx');
+    console.log(token);
+    user.tokens.push({access,token});
+    //console.log(user.tokens);
+    return user.save().then(() => {
+        return token;
+    });
+}
+
+var user = mongoose.model('users', userSchema);
 
 /* 
     name : { 

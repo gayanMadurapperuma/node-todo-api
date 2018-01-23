@@ -20,6 +20,17 @@ var data = {
     age : '25'
 }
 
+var access = 'auth';
+var id = 232348028304;
+
+var test = {
+    _id : id.toString(16),
+    id,
+    access
+}
+
+return console.log(test);
+
 var hs = jwt.sign(data, 'sinxcosx=tanx');
 console.log(hs);
 
