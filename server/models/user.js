@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const jwt = require('jsonwebtoken');
+const _ = require('lodash');
 
 /* 
     user Model Structure
@@ -45,9 +46,21 @@ var userSchema = new mongoose.Schema({
 });
 
 /*
+    -post request to create new user not secure to return all data of user, must be filter 
+    value what should return,
+*/
+userSchema.methods.toJSON = function(){
+ var user = this;
+ var userObject = user.toObject();
+ 
+ return _.pick(userObject, ['_id', 'email']);
+};
+
+/*
     userSchema.method is object, so can add any mathod I like.i[nstanse mathod..]
 */
 userSchema.methods.generateAuthToken = function () {
+    //This is a Instanse method
     var user = this;
     var access = 'auth';
     //jwt secrat value normally get FROM CONFIGURATION VARIABLE
@@ -58,7 +71,24 @@ userSchema.methods.generateAuthToken = function () {
     return user.save().then(() => {
         return token;
     });
-}
+};
+
+userSchema.statics.findByToken = function(token){
+  //This is a model method, not a instanse method
+  var User = this;
+  var decoded;
+  try{
+    decoded = jwt.verify(token, 'sinxcosx');
+  }catch(e){
+    return Promise.reject();
+  };
+
+  return User.findOne({
+    '_id' : decoded._id,
+    'tokens.token' : token,
+    'tokens.access' : 'auth'
+  });
+};
 
 var user = mongoose.model('users', userSchema);
 
