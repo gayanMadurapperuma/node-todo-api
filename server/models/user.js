@@ -118,6 +118,25 @@ userSchema.pre('save', function (next) {
     }
   })
 
+userSchema.statics.findByCredentials = function(email, password) {
+    var User = this;
+    return User.findOne({email}).then((user) => {
+        //return console.log(user);
+        if(!user)
+            return Promise.reject();
+        //bycrype.copmare only support for a callback, not support Promises
+        return new Promise((resolve,reject) => {
+            bcyrpt.compare(password, user.password, (err,res) => {
+                //console.log(`response :  ${res}`);
+                if (res)
+                    resolve(user);
+                else    
+                    reject();
+            });
+        })
+    })
+};
+
 var user = mongoose.model('users', userSchema);
 
 /* 
