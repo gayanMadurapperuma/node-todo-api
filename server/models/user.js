@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const jwt = require('jsonwebtoken');
 const _ = require('lodash');
+const bcyrpt = require('bcryptjs');
 
 /* 
     user Model Structure
@@ -65,9 +66,7 @@ userSchema.methods.generateAuthToken = function () {
     var access = 'auth';
     //jwt secrat value normally get FROM CONFIGURATION VARIABLE
     var token = jwt.sign({_id : user._id.toHexString(), access},'sinxcosx');
-    console.log(token);
     user.tokens.push({access,token});
-    //console.log(user.tokens);
     return user.save().then(() => {
         return token;
     });
@@ -82,13 +81,42 @@ userSchema.statics.findByToken = function(token){
   }catch(e){
     return Promise.reject();
   };
-
   return User.findOne({
     '_id' : decoded._id,
     'tokens.token' : token,
     'tokens.access' : 'auth'
   });
 };
+
+// userSchema.pre('save', function (next){
+//     //console.log
+//     var user = this;
+//     if (user.isModified('password')){
+//         console.log('isModified');
+//         bcrypt.genSalt(10, (err, salt) => {
+//             //if (err) Promise.reject();
+//             bcrypt.hash(user.password,salt,(err, hash) => {
+//                 return console.log(hash);
+//             });
+//         })
+//     }else
+//         next();
+// });
+
+userSchema.pre('save', function (next) {
+    var user = this;
+  
+    if (user.isModified('password')) {
+        bcyrpt.genSalt(10, (err, salt) => {
+            bcyrpt.hash(user.password, salt, (err, hash) => {
+          user.password = hash;
+          next();
+        });
+      });
+    } else {
+      next();
+    }
+  })
 
 var user = mongoose.model('users', userSchema);
 
