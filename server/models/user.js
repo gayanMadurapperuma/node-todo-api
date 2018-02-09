@@ -116,7 +116,7 @@ userSchema.pre('save', function (next) {
     } else {
       next();
     }
-  })
+  });
 
 userSchema.statics.findByCredentials = function(email, password) {
     var User = this;
@@ -133,8 +133,8 @@ userSchema.statics.findByCredentials = function(email, password) {
                 else    
                     reject();
             });
-        })
-    })
+        });
+    });
 };
 
 var user = mongoose.model('users', userSchema);
