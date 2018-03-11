@@ -32,10 +32,10 @@ app.get('/todos', (req,res) => {
    todo.find().then((todos) => {
         res.send({
             todos
-        })
+        });
    },(err) => {
        res.statusCode(400).send(err);
-   })
+   });
 });
 
 app.get('/todos/:id', (req,res) => {
@@ -44,8 +44,8 @@ app.get('/todos/:id', (req,res) => {
         return res.status(404).send();
     todo.findById(id).then((todo) => {
         res.send({todo});
-    },(e) => res.status(400).send())
-})
+    },(e) => res.status(400).send());
+});
 
 app.delete('/todos/:id', (req,res) => {
     var id = req.params.id;
@@ -59,7 +59,7 @@ app.delete('/todos/:id', (req,res) => {
         res.send(todo);
     }).catch((e) => {
         return res.status(400).send(`error : ${e}`);
-    })
+    });
 });
 
 app.patch('/todos/:id', (req,res) => {  
@@ -81,7 +81,7 @@ app.patch('/todos/:id', (req,res) => {
         res.send(todo);
     }).catch((err) => {
         res.status(400).send();
-    })
+    });
 
 });
 
@@ -95,7 +95,7 @@ app.post('/user',(req,res) => {
         res.header('x-auth',token).send(new_user);
     }).catch((e) => {
         res.status(400).send(e);
-    })
+    });
 });
 
 app.post('/user/login', (req,res) => {
@@ -106,7 +106,7 @@ app.post('/user/login', (req,res) => {
     user.findByCredentials(body.email,body.password).then((user) => {
         return user.generateAuthToken().then((token) => {
             res.header('x-auth', token).send(user);
-        })
+        });
     }).catch((e) => {
         res.status(400).send();
     });
@@ -118,4 +118,4 @@ app.get('/user/me', authenticate ,(req,res) => {
 
 app.listen(port, () => {
     console.log(`app started on port ${port}`);
-})
+});
